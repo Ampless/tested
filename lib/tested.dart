@@ -1,38 +1,68 @@
 library tested;
-import 'dart:async';
 
+import 'dart:async';
+import 'dart:io';
+
+import 'package:meta/meta.dart';
 import 'package:test/test.dart';
 
 typedef TestCase = FutureOr<void> Function();
 
-// TODO: expectTestCase(() async => throw 'kekw', Error)
+/// Thrown by `expectTestCase`, when it expected an error, but didn't get one.
+class NotThrownError extends Error {}
+
+/// Returns a `TestCase` that tries to run `tfunc`.
+///
+/// If `tfunc` throws and `error` is `false`, it `rethrow`s.
+/// If `tfunc` doesn't throw and `error` is `true`, it throws a `NotThrownError`.
+/// If `tfunc` throws, `error` is `true` and `expct` is not `null`, it checks
+/// whether the thrown error is equal to `expct`.
+///
+/// If `expct` is an instance of `Error` or `Exception` and `error` is `null`,
+/// a warning is printed to `stderr`.
+///
+/// If the throwing behavior is as expected, it checks whether the returned
+/// value is equal to `expct`.
 TestCase expectTestCase<T>(
   FutureOr<T> Function() tfunc,
-  T expct,
-  bool error,
-) =>
+  T expct, [
+  bool? error,
+]) =>
     () async {
+      if (error == null && (expct is Error || expct is Exception)) {
+        stderr.writeln(
+            '[WARN] You\'re passing an \'$expct\' to `expectTestCase`, '
+            'but don\'t say you\'re trying to get an error.');
+        stderr.writeln(
+            'If this is intended, please tag a `false` onto the end of the call.');
+      }
       T res;
       try {
         res = await tfunc();
       } catch (e) {
-        if (!error) {
+        if (!(error ?? false)) {
           rethrow;
         } else {
+          if (expct != null) expect(e, expct);
           return;
         }
       }
-      if (error) throw '[expectTestCase($tfunc, $expct)] No error.';
+      if (error ?? false) throw NotThrownError();
       expect(res, expct);
     };
 
-TestCase testAssert(bool b) => () async {
+TestCase testAssert(bool b) => () {
       assert(b);
     };
 
-TestCase testExpect<T>(T actual, T matcher) =>
-    () async => expect(actual, matcher);
+TestCase testExpect<T>(T actual, T matcher) => () => expect(actual, matcher);
 
+/// Runs all `testCases` inside a `group` called `groupName`.
+///
+/// If a `setup` is given, it is registered using `setUp`.
+///
+/// See also: `test`, `group` and `setUp` from `package:test`.
+@isTestGroup
 void tests(String groupName, Iterable<TestCase> testCases, [TestCase? setup]) =>
     group(groupName, () {
       if (setup != null) setUp(setup);

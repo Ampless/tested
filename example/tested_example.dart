@@ -9,7 +9,7 @@ int badAdd(int a, int b) {
 }
 
 TestCase addTestCase(int Function(int, int) addFunc, List<int> c) =>
-    expectTestCase(() => addFunc(c[0], c[1]), c[2], false);
+    expectTestCase(() => addFunc(c[0], c[1]), c[2]);
 
 void main() {
   const cases = [
@@ -17,6 +17,6 @@ void main() {
     [40, 2, 42],
     [-1, -12, -13],
   ];
-  cases.map((c) => addTestCase(goodAdd, c)); // doesn't fail
-  cases.map((c) => addTestCase(badAdd, c)); // fails
+  tests('good', cases.map((c) => addTestCase(goodAdd, c))); // doesn't fail
+  tests('bad', cases.map((c) => addTestCase(badAdd, c))); // fails
 }
