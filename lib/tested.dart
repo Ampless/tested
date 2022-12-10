@@ -57,14 +57,17 @@ TestCase testAssert(bool b) => () {
 
 TestCase testExpect<T>(T actual, T matcher) => () => expect(actual, matcher);
 
+var _gid = 1;
+
 /// Runs all `testCases` inside a `group` called `groupName`.
 ///
 /// If a `setup` is given, it is registered using `setUp`.
 ///
 /// See also: `test`, `group` and `setUp` from `package:test`.
 @isTestGroup
-void tests(String groupName, Iterable<TestCase> testCases, [TestCase? setup]) =>
-    group(groupName, () {
+void tests(Iterable<TestCase> testCases,
+        [String? groupName, TestCase? setup]) =>
+    group(groupName ?? 'tested group ${_gid++}', () {
       if (setup != null) setUp(setup);
       var i = 1;
       for (final testCase in testCases) {

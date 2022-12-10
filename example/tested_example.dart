@@ -17,6 +17,6 @@ void main() {
     [40, 2, 42],
     [-1, -12, -13],
   ];
-  tests('good', cases.map((c) => addTestCase(goodAdd, c))); // doesn't fail
-  tests('bad', cases.map((c) => addTestCase(badAdd, c))); // fails
+  tests(cases.map((c) => addTestCase(goodAdd, c)), 'good'); // doesn't fail
+  tests(cases.map((c) => addTestCase(badAdd, c)), 'bad'); // fails
 }
