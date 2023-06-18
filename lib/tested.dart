@@ -8,21 +8,21 @@ import 'package:test/test.dart';
 
 typedef TestCase = FutureOr<void> Function();
 
-/// Thrown by `expectTestCase`, when it expected an error, but didn't get one.
+/// Thrown by [expectTestCase], when it expected an error, but didn't get one.
 class NotThrownError extends Error {}
 
-/// Returns a `TestCase` that tries to run `tfunc`.
+/// Returns a [TestCase] that tries to run [tfunc].
 ///
-/// If `tfunc` throws and `error` is `false`, it `rethrow`s.
-/// If `tfunc` doesn't throw and `error` is `true`, it throws a `NotThrownError`.
-/// If `tfunc` throws, `error` is `true` and `expct` is not `null`, it checks
-/// whether the thrown error is equal to `expct`.
+/// If [tfunc] throws and [error] is `false`, it `rethrow`s.
+/// If [tfunc] doesn't throw and [error] is `true`, it throws a `NotThrownError`.
+/// If [tfunc] throws, [error] is `true` and [expct] is not `null`, it checks
+/// whether the thrown error is equal to [expct].
 ///
-/// If `expct` is an instance of `Error` or `Exception` and `error` is `null`,
+/// If [expct] is an instance of [error] or [Exception] and [error] is `null`,
 /// a warning is printed to `stderr`.
 ///
 /// If the throwing behavior is as expected, it checks whether the returned
-/// value is equal to `expct`.
+/// value is equal to [expct].
 TestCase expectTestCase<T>(
   FutureOr<T> Function() tfunc,
   T expct, [
@@ -51,19 +51,23 @@ TestCase expectTestCase<T>(
       expect(res, expct);
     };
 
+/// Returns a [TestCase] that calls [assert] with the given argument.
 TestCase testAssert(bool b) => () {
       assert(b);
     };
 
-TestCase testExpect<T>(T actual, T matcher) => () => expect(actual, matcher);
+/// Returns a [TestCase] that calls [expect] with the given arguments.
+TestCase testExpect<T>(T actual, T matcher,
+        {String? reason, Object? /* String|bool */ skip}) =>
+    () => expect(actual, matcher, reason: reason, skip: skip);
 
 var _gid = 1;
 
-/// Runs all `testCases` inside a `group` called `groupName`.
+/// Runs all [testCases] inside a [group] called [groupName].
 ///
-/// If a `setup` is given, it is registered using `setUp`.
+/// If a [setup] is given, it is registered using [setUp].
 ///
-/// See also: `test`, `group` and `setUp` from `package:test`.
+/// See also: [test], [group] and [setUp] (from `package:test`)
 @isTestGroup
 void tests(Iterable<TestCase> testCases,
         [String? groupName, TestCase? setup]) =>
