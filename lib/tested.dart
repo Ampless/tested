@@ -18,7 +18,7 @@ class NotThrownError extends Error {}
 /// If [tfunc] throws, [error] is `true` and [expct] is not `null`, it checks
 /// whether the thrown error is equal to [expct].
 ///
-/// If [expct] is an instance of [error] or [Exception] and [error] is `null`,
+/// If [expct] is an instance of [Error] or [Exception] and [error] is `null`,
 /// a warning is printed to `stderr`.
 ///
 /// If the throwing behavior is as expected, it checks whether the returned
