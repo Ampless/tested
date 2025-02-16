@@ -1,12 +1,12 @@
 name: tested
 description: A testing library based on package:test
-version: 1.0.1
+version: 1.1.0
 homepage: https://github.com/Ampless/tested
 
 environment:
   sdk: ^3.0.0
 
 dependencies:
-  lints: ^4.0.0
+  lints: ^5.0.0
   meta: ^1.0.0
   test: ^1.0.0

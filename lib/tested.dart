@@ -1,5 +1,3 @@
-library tested;
-
 import 'dart:async';
 import 'dart:io';
 
@@ -49,6 +47,12 @@ TestCase expectTestCase<T>(
       }
       if (error ?? false) throw NotThrownError();
       expect(res, expct);
+    };
+
+/// Returns a [TestCase] that tries to run [tfunc] and calls [assert] with the
+/// result.
+TestCase assertTestCase(FutureOr<bool> Function() tfunc) => () async {
+      assert(await tfunc());
     };
 
 /// Returns a [TestCase] that calls [assert] with the given argument.
